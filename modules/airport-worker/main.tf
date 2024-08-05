@@ -26,7 +26,6 @@ locals {
     "--containerd-network-pool=${var.concourse.containerd_network_pool}",
     "--ephemeral",
     "--log-level=${var.concourse.log_level}",
-    "--runtime=containerd",
     "--tsa-host=${var.tsa_host}",
     "--tsa-public-key=${local.concourse_key_dir}/tsa_host_key.pub",
     "--tsa-worker-private-key=${local.concourse_key_dir}/worker_key",
@@ -111,12 +110,24 @@ module "user_data" {
   version = "0.1.0"
 
   command = local.command
-  # Containerd needs to load kernel modules. The concourse container image
-  # does not have modprobe, but we can link to the busybox added in the AMI.
+  env = [
+    # Use an environment variable for this instead of an
+    # argument because the entrypoint script reads it.
+    {
+      name  = "CONCOURSE_RUNTIME"
+      value = "containerd"
+    },
+  ]
   init-scripts = [
     <<-EOF
     #!/bin/sh
+    # Containerd needs to load kernel modules. The concourse container image
+    # does not have modprobe, but we can link to the busybox added in the AMI.
     ln -s /.easyto/bin/busybox /sbin/modprobe
+
+    # The container image entrypoint moves PID 1 to the entrypoint
+    # cgroup, but we modify it to move the entrypoint PID instead.
+    sed -i 's|^echo 1 >|echo $$ >|' /usr/local/bin/entrypoint.sh
     EOF
   ]
   volumes = local.volumes
