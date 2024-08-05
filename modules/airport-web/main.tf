@@ -83,13 +83,13 @@ locals {
     {
       imds = {
         name = "AWS_REGION"
-        path = "/latest/meta-data/placement/region"
+        path = "placement/region"
       }
     },
     {
       imds = {
         name = "IPV4_ADDRESS"
-        path = "/latest/meta-data/local-ipv4"
+        path = "local-ipv4"
       }
     },
     {
