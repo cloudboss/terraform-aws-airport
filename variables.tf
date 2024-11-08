@@ -91,10 +91,10 @@ variable "ssh_key" {
 
 variable "subnet_ids" {
   type = object({
-    private = list(string)
-    public  = list(string)
+    application   = list(string)
+    load_balancer = list(string)
   })
-  description = "Subnet IDs for private and public subnets."
+  description = "Subnet IDs for application and load balancer."
 }
 
 variable "ssm_prefix" {
@@ -194,6 +194,7 @@ variable "web" {
       extra_policy_arns    = optional(list(string), [])
       permissions_boundary = optional(string, null)
     }), {})
+    public = optional(bool, true)
     volume_root = optional(object({
       iops = optional(number, null)
       name = optional(string, "/dev/xvda")

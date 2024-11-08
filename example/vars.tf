@@ -25,12 +25,12 @@ locals {
   stack_key = "atl"
 
   subnet_ids = {
-    private = [
+    application = [
       "subnet-ce19ab6789a0f558b",
       "subnet-770acebbb9c051efa",
       "subnet-a9d33d85eef79e604",
     ]
-    public = [
+    load_balancer = [
       "subnet-c85d9f30fa71b03eb",
       "subnet-dc4b366adfaf8c151",
       "subnet-28a3bdd5df0b595b3",

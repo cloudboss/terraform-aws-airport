@@ -241,7 +241,7 @@ module "database" {
   security_group_ids  = [local.security_group_mapping["database"]]
   serverless_v2       = var.database.serverless_v2
   skip_final_snapshot = var.database.skip_final_snapshot
-  subnet_ids          = var.subnet_ids.private
+  subnet_ids          = var.subnet_ids.application
   tags                = var.tags
 }
 
@@ -278,7 +278,7 @@ module "lb_tsa" {
   }
   name               = "${local.stack_prefix}-tsa"
   security_group_ids = [local.security_group_mapping["lb-tsa"]]
-  subnet_mapping = [for subnet_id in var.subnet_ids.private : {
+  subnet_mapping = [for subnet_id in var.subnet_ids.application : {
     subnet_id = subnet_id
   }]
   tags = var.tags
@@ -302,7 +302,7 @@ module "lb_web" {
   source  = "cloudboss/elbv2/aws"
   version = "0.1.1"
 
-  internal = false
+  internal = !var.web.public
   listener = {
     default_action = {
       type = "forward"
@@ -318,7 +318,7 @@ module "lb_web" {
   }
   name               = "${local.stack_prefix}-web"
   security_group_ids = [local.security_group_mapping["lb-web"]]
-  subnet_mapping = [for subnet_id in var.subnet_ids.public : {
+  subnet_mapping = [for subnet_id in var.subnet_ids.load_balancer : {
     subnet_id = subnet_id
   }]
   tags = var.tags
@@ -400,7 +400,7 @@ module "web" {
       module.ssh_keys.path_worker_keys_public,
     ]
   }
-  subnet_ids = var.subnet_ids.private
+  subnet_ids = var.subnet_ids.application
   tags       = var.tags
   target_group_arns = [
     module.lb_tsa.target_group.arn,
@@ -431,7 +431,7 @@ module "workers" {
       module.ssh_keys.paths_worker_keys_private[each.key],
     ]
   }
-  subnet_ids = var.subnet_ids.private
+  subnet_ids = var.subnet_ids.application
   tags       = var.tags
   tsa_host   = local.tsa_host
   volumes    = each.value.volumes

@@ -136,8 +136,8 @@ The subnet ids object has the following structure.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| private | Private subnets for instances and database. | list(string) | N/A | yes |
-| public | Public subnets for web load balancer. | list(string) | N/A | yes |
+| application | Subnets for application instances, database, and TSA load balancer. | list(string) | N/A | yes |
+| load_balancer | Subnets for the web load balancer. | list(string) | N/A | yes |
 
 ## web object
 
@@ -152,6 +152,7 @@ The web object has the following structure.
 | extra\_env\_from | Extra environment variables from external sources. See the [easyto documentation](https://github.com/cloudboss/easyto?tab=readme-ov-file#env-from-object) for the structure of the env-from object. | list(object) | `[]` | no |
 | extra\_security\_group\_ids | Extra security groups to assign to the instances. | list(string) | `[]` | no |
 | iam | Configuration of the IAM role of the instances. | [object](#iam-object) | `{}` | no |
+| public | Whether or not the load balancer should be internet facing. | bool | `true` | no |
 | volume_root | Configuration of the root EBS volume of the instances. | [object](#volume-object) | `{}` | no |
 
 ## web concourse object
