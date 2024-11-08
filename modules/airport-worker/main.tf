@@ -122,8 +122,8 @@ module "user_data" {
     <<-EOF
     #!/bin/sh
     # Containerd needs to load kernel modules. The concourse container image
-    # does not have modprobe, but we can link to the busybox added in the AMI.
-    ln -s /.easyto/bin/busybox /sbin/modprobe
+    # does not have modprobe, but we can link to the one included by easyto.
+    ln -s /.easyto/sbin/modprobe /sbin/modprobe
 
     # The container image entrypoint moves PID 1 to the entrypoint
     # cgroup, but we modify it to move the entrypoint PID instead.
